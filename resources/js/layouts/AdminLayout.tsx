@@ -79,8 +79,8 @@ const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> =
                     <div key={menu.key}>
                         <button onClick={() => toggleMenu(menu.key)}
                             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors overflow-hidden ${openMenus[menu.key]
-                                    ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10"
-                                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
+                                ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10"
+                                : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
                                 }`}>
                             <i className="material-symbols-outlined !text-[22px] shrink-0">{menu.icon}</i>
                             <span className={`flex-1 text-left truncate transition-all duration-300 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>{menu.label}</span>
@@ -91,8 +91,8 @@ const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> =
                                 {menu.children.map((child) => (
                                     <Link key={child.path} href={child.path}
                                         className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive(child.path)
-                                                ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 font-medium"
-                                                : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
+                                            ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 font-medium"
+                                            : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
                                             }`}>
                                         <i className="material-symbols-outlined !text-[16px]">{child.icon}</i>
                                         <span className="truncate">{child.label}</span>
