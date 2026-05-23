@@ -13,7 +13,7 @@ const landingData: LandingData = {
         { label: "Testimoni", href: "#testimonials" },
         { label: "FAQ", href: "#faq" },
         { label: "Kontak", href: "#contact" },
-        { label: "Login Pelanggan", href: "/panel/dashboard", isButton: true },
+        { label: "Login Pelanggan", href: "/auth/login", isButton: true },
     ],
 
     pricingPlans: [
