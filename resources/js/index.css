@@ -1017,7 +1017,7 @@ html[dir="rtl"] {
 
     &.apexcharts-theme-dark {
       .apexcharts-tooltip-series-group {
-        @apply !bg-white dark: !bg-black;
+        @apply !bg-white dark:!bg-black;
       }
     }
   }
@@ -1111,7 +1111,7 @@ html[dir="rtl"] {
 
   .apexcharts-legend-text,
   .apexcharts-title-text {
-    @apply dark: !text-gray-400;
+    @apply dark:!text-gray-400;
   }
 
   .apexcharts-text {
