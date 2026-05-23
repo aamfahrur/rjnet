@@ -74,9 +74,8 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 {toasts.map((toast) => (
                     <div
                         key={toast.id}
-                        className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg transition-all duration-300 ${
-                            toast.exiting ? "opacity-0 translate-x-4 scale-95" : "opacity-100 translate-x-0 scale-100"
-                        } ${colors[toast.type]}`}
+                        className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg transition-all duration-300 ${toast.exiting ? "opacity-0 translate-x-4 scale-95" : "opacity-100 translate-x-0 scale-100"
+                            } ${colors[toast.type]}`}
                     >
                         <i className={`material-symbols-outlined !text-[20px] shrink-0 ${iconColors[toast.type]}`}>
                             {icons[toast.type]}

@@ -26,9 +26,8 @@ const Index: React.FC<Props> = ({ routers }) => (
                             <h3 className="font-semibold text-gray-800 dark:text-white group-hover:text-primary-500 transition-colors">{r.name}</h3>
                             <p className="text-xs text-gray-500 font-mono mt-0.5">{r.host}</p>
                         </div>
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold ${
-                            r.status.value === "online" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                        }`}>
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold ${r.status.value === "online" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                            }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${r.status.dotClass}`} />
                             {r.status.label}
                         </span>

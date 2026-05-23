@@ -35,16 +35,14 @@ const Index: React.FC<Props> = ({ tickets }) => (
                                 </td>
                                 <td className="px-4 py-3.5 text-xs text-gray-600 dark:text-gray-300">{t.customer?.full_name || <span className="text-gray-400 italic">-</span>}</td>
                                 <td className="px-4 py-3.5">
-                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${
-                                        t.priority.value === "high" || t.priority.value === "urgent"
+                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${t.priority.value === "high" || t.priority.value === "urgent"
                                             ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                                             : t.priority.value === "medium"
                                                 ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
                                                 : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                                    }`}>
-                                        <span className={`w-1.5 h-1.5 rounded-full ${
-                                            t.priority.value === "high" || t.priority.value === "urgent" ? "bg-red-500" : t.priority.value === "medium" ? "bg-amber-500" : "bg-blue-500"
-                                        }`} />
+                                        }`}>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${t.priority.value === "high" || t.priority.value === "urgent" ? "bg-red-500" : t.priority.value === "medium" ? "bg-amber-500" : "bg-blue-500"
+                                            }`} />
                                         {t.priority.label}
                                     </span>
                                 </td>

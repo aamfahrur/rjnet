@@ -63,11 +63,10 @@ const Index: React.FC<Props> = ({ customers, filters = {} }) => {
                 <div className="flex gap-2 flex-wrap">
                     {statusFilters.map((f) => (
                         <button key={f.value} onClick={() => handleStatusFilter(f.value)}
-                            className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                activeStatus === f.value
+                            className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${activeStatus === f.value
                                     ? "bg-primary-500 text-white shadow-sm shadow-primary-500/25"
                                     : "bg-white dark:bg-[#0c1427] border border-gray-200 dark:border-[#172036] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
-                            }`}>
+                                }`}>
                             {f.label}
                         </button>
                     ))}
@@ -148,18 +147,16 @@ const Index: React.FC<Props> = ({ customers, filters = {} }) => {
                                 if (l.label.includes("Sebelumnya") || l.label.includes("Berikutnya")) {
                                     return (
                                         <Link key={i} href={l.url || "#"}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                                                l.url ? "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#15203c]" : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
-                                            }`}>
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${l.url ? "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#15203c]" : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
+                                                }`}>
                                             {l.label.replace("&laquo; ", "").replace(" &raquo;", "")}
                                         </Link>
                                     );
                                 }
                                 return (
                                     <Link key={i} href={l.url || "#"}
-                                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium transition-colors ${
-                                            l.active ? "bg-primary-500 text-white shadow-sm" : l.url ? "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#15203c]" : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
-                                        }`}>
+                                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium transition-colors ${l.active ? "bg-primary-500 text-white shadow-sm" : l.url ? "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#15203c]" : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
+                                            }`}>
                                         {l.label}
                                     </Link>
                                 );

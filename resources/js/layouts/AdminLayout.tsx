@@ -5,39 +5,53 @@ import { ToastProvider, useToast } from "../components/Toast";
 interface AdminLayoutProps { children: ReactNode; }
 
 const menuItems = [
-    { key: "dashboard", icon: "dashboard", label: "Dashboard",
+    {
+        key: "dashboard", icon: "dashboard", label: "Dashboard",
         children: [
             { path: "/admin/dashboard", label: "Overview", icon: "space_dashboard" },
             { path: "/admin/monitoring", label: "NOC Monitoring", icon: "monitor_heart" },
-        ]},
-    { key: "customers", icon: "group", label: "Pelanggan",
+        ]
+    },
+    {
+        key: "customers", icon: "group", label: "Pelanggan",
         children: [
             { path: "/admin/customers", label: "Semua Pelanggan", icon: "people" },
             { path: "/admin/customers/create", label: "Tambah Pelanggan", icon: "person_add" },
-        ]},
-    { key: "routers", icon: "router", label: "Router",
+        ]
+    },
+    {
+        key: "routers", icon: "router", label: "Router",
         children: [
             { path: "/admin/routers", label: "Semua Router", icon: "dns" },
             { path: "/admin/routers/create", label: "Tambah Router", icon: "add_circle" },
-        ]},
-    { key: "billing", icon: "receipt_long", label: "Billing",
+        ]
+    },
+    {
+        key: "billing", icon: "receipt_long", label: "Billing",
         children: [
             { path: "/admin/invoices", label: "Invoice", icon: "description" },
             { path: "/admin/payments", label: "Pembayaran", icon: "payments" },
-        ]},
-    { key: "tickets", icon: "confirmation_number", label: "Tiket Support",
+        ]
+    },
+    {
+        key: "tickets", icon: "confirmation_number", label: "Tiket Support",
         children: [
             { path: "/admin/tickets", label: "Semua Tiket", icon: "support_agent" },
-        ]},
-    { key: "network", icon: "share", label: "Jaringan",
+        ]
+    },
+    {
+        key: "network", icon: "share", label: "Jaringan",
         children: [
             { path: "/admin/topology", label: "Topologi", icon: "account_tree" },
-        ]},
-    { key: "settings", icon: "settings", label: "Pengaturan",
+        ]
+    },
+    {
+        key: "settings", icon: "settings", label: "Pengaturan",
         children: [
             { path: "/admin/users", label: "Pengguna", icon: "manage_accounts" },
             { path: "/admin/settings", label: "Konfigurasi", icon: "tune" },
-        ]},
+        ]
+    },
 ];
 
 const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> = ({ collapsed, toggleActive }) => {
@@ -47,9 +61,8 @@ const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> =
     const isActive = (path: string) => url === path || url.startsWith(path + "/");
 
     return (
-        <aside className={`fixed top-0 left-0 z-40 h-screen bg-white dark:bg-[#0c1427] border-r border-gray-100 dark:border-[#172036] transition-all duration-300 flex flex-col ${
-            collapsed ? "w-[72px]" : "w-[260px]"
-        }`}>
+        <aside className={`fixed top-0 left-0 z-40 h-screen bg-white dark:bg-[#0c1427] border-r border-gray-100 dark:border-[#172036] transition-all duration-300 flex flex-col ${collapsed ? "w-[72px]" : "w-[260px]"
+            }`}>
             <div className="flex items-center h-16 px-4 border-b border-gray-100 dark:border-[#172036] shrink-0">
                 <Link href="/admin/dashboard" className="flex items-center gap-3 overflow-hidden">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
@@ -65,11 +78,10 @@ const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> =
                 {menuItems.map((menu) => (
                     <div key={menu.key}>
                         <button onClick={() => toggleMenu(menu.key)}
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors overflow-hidden ${
-                                openMenus[menu.key]
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors overflow-hidden ${openMenus[menu.key]
                                     ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10"
                                     : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
-                            }`}>
+                                }`}>
                             <i className="material-symbols-outlined !text-[22px] shrink-0">{menu.icon}</i>
                             <span className={`flex-1 text-left truncate transition-all duration-300 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>{menu.label}</span>
                             <i className={`material-symbols-outlined !text-[16px] transition-transform shrink-0 ${openMenus[menu.key] ? "rotate-180" : ""} ${collapsed ? "hidden" : ""}`}>expand_more</i>
@@ -78,11 +90,10 @@ const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> =
                             <div className="ml-9 mt-1 space-y-0.5">
                                 {menu.children.map((child) => (
                                     <Link key={child.path} href={child.path}
-                                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                                            isActive(child.path)
+                                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive(child.path)
                                                 ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 font-medium"
                                                 : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
-                                        }`}>
+                                            }`}>
                                         <i className="material-symbols-outlined !text-[16px]">{child.icon}</i>
                                         <span className="truncate">{child.label}</span>
                                     </Link>
