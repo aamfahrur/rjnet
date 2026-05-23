@@ -110,6 +110,16 @@ const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> =
 const AdminHeader: React.FC<{ toggleActive: () => void; darkMode: boolean; setDarkMode: (v: boolean) => void }> = ({ toggleActive, darkMode, setDarkMode }) => {
     const { auth } = usePage().props as any;
     const user = auth?.user;
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        if (!dropdownOpen) return;
+        const handler = () => setDropdownOpen(false);
+        document.addEventListener("click", handler);
+        return () => document.removeEventListener("click", handler);
+    }, [dropdownOpen]);
+
     return (
         <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#0c1427]/80 backdrop-blur-lg border-b border-gray-100 dark:border-[#172036]">
             <div className="flex items-center justify-between h-16 px-4 md:px-6">
@@ -120,14 +130,42 @@ const AdminHeader: React.FC<{ toggleActive: () => void; darkMode: boolean; setDa
                     <button onClick={() => setDarkMode(!darkMode)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-[#15203c] transition-colors">
                         <i className="material-symbols-outlined text-gray-500 dark:text-gray-400 !text-[20px]">{darkMode ? "light_mode" : "dark_mode"}</i>
                     </button>
-                    <div className="flex items-center gap-3 pl-3 border-l border-gray-200 dark:border-gray-700">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                            {user?.name?.charAt(0)?.toUpperCase() || "A"}
-                        </div>
-                        <div className="hidden sm:block text-sm leading-tight">
-                            <p className="font-semibold text-gray-800 dark:text-white">{user?.name || "Admin"}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
-                        </div>
+
+                    {/* User dropdown */}
+                    <div className="relative pl-3 border-l border-gray-200 dark:border-gray-700">
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setDropdownOpen(!dropdownOpen); }}
+                            className="flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-[#15203c] rounded-lg p-1.5 -m-1.5 transition-colors"
+                        >
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                                {user?.name?.charAt(0)?.toUpperCase() || "A"}
+                            </div>
+                            <div className="hidden sm:block text-sm leading-tight text-left">
+                                <p className="font-semibold text-gray-800 dark:text-white">{user?.name || "Admin"}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                            </div>
+                            <i className={`material-symbols-outlined text-gray-400 !text-[16px] transition-transform ${dropdownOpen ? "rotate-180" : ""}`}>expand_more</i>
+                        </button>
+
+                        {/* Dropdown menu */}
+                        {dropdownOpen && (
+                            <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#0c1427] rounded-xl border border-gray-100 dark:border-[#172036] shadow-xl py-1.5 z-50" onClick={(e) => e.stopPropagation()}>
+                                <div className="px-4 py-2.5 border-b border-gray-100 dark:border-[#172036]">
+                                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{user?.name || "Admin"}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || "admin@rjnet.id"}</p>
+                                </div>
+                                <div className="py-1">
+                                    <Link href="/admin/dashboard" className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#15203c] transition-colors" onClick={() => setDropdownOpen(false)}>
+                                        <i className="material-symbols-outlined !text-[18px]">space_dashboard</i>
+                                        Dashboard
+                                    </Link>
+                                    <Link href="/auth/logout" method="post" as="button" className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" onClick={() => setDropdownOpen(false)}>
+                                        <i className="material-symbols-outlined !text-[18px]">logout</i>
+                                        Logout
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
