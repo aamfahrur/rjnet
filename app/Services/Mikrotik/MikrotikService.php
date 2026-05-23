@@ -10,9 +10,7 @@ use RouterOS\Client;
 use RouterOS\Config;
 use RouterOS\Exceptions\ClientException;
 use RouterOS\Exceptions\ConnectException;
-use RouterOS\Exceptions\QueryException;
 use RouterOS\Query;
-use RuntimeException;
 
 /**
  * MikroTik RouterOS API Service
@@ -55,15 +53,15 @@ class MikrotikService
 
             // Update router info
             $router->update([
-                'status'             => RouterStatus::ONLINE,
-                'router_os_version'  => $identity[0]['version'] ?? null,
-                'last_checked_at'    => now(),
+                'status'            => RouterStatus::ONLINE,
+                'router_os_version' => $identity[0]['version'] ?? null,
+                'last_checked_at'   => now(),
             ]);
 
             return [
-                'success'  => true,
-                'identity' => $identity[0]['name'] ?? 'MikroTik',
-                'version'  => $identity[0]['version'] ?? 'unknown',
+                'success'    => true,
+                'identity'   => $identity[0]['name'] ?? 'MikroTik',
+                'version'    => $identity[0]['version'] ?? 'unknown',
                 'latency_ms' => $latency,
             ];
         } catch (ConnectException $e) {
