@@ -2,7 +2,7 @@ import "material-symbols";
 import "remixicon/fonts/remixicon.css";
 import "react-calendar/dist/Calendar.css";
 
-import "./index.css";
+import "../css/app.css";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
