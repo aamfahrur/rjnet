@@ -143,5 +143,9 @@ class DatabaseSeeder extends Seeder
 
         $this->command?->info('Database seeded successfully!');
         $this->command?->info('Default admin: admin@rjnet.id / password');
+
+        // Seed dummy customers
+        $this->call(CustomerSeeder::class);
+        $this->command?->info('Customer dummy data seeded!');
     }
 }
