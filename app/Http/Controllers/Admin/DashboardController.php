@@ -37,11 +37,11 @@ class DashboardController extends Controller
             'online_users'         => $this->getOnlineUsersEstimate(),
         ];
 
-        $recentActivity = $this->getRecentActivity();
-
         return Inertia::render('Admin/Dashboard', [
-            'stats'          => $stats,
-            'recentActivity' => $recentActivity,
+            'stats'             => $stats,
+            'revenue_chart'     => $this->getRevenueChart(),
+            'customer_growth'   => $this->getCustomerGrowth(),
+            'recent_activities' => $this->getRecentActivities(),
         ]);
     }
 
@@ -58,12 +58,59 @@ class DashboardController extends Controller
         return \App\Models\OnlineSession::where('recorded_at', '>=', now()->subMinutes(5))->count();
     }
 
-    private function getRecentActivity(): array
+    /**
+     * Get revenue chart data for the last 6 months.
+     */
+    private function getRevenueChart(): array
+    {
+        $months = [];
+        $data = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $months[] = $date->translatedFormat('M');
+            $data[] = Invoice::paid()
+                ->whereMonth('paid_at', $date->month)
+                ->whereYear('paid_at', $date->year)
+                ->sum('total_amount');
+        }
+
+        return array_map(fn ($month, $amount) => ['month' => $month, 'amount' => (int) $amount], $months, $data);
+    }
+
+    /**
+     * Get customer growth chart data for the last 6 months.
+     */
+    private function getCustomerGrowth(): array
+    {
+        $months = [];
+        $data = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $months[] = $date->translatedFormat('M');
+            $data[] = Customer::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+        }
+
+        return array_map(fn ($month, $count) => ['month' => $month, 'count' => $count], $months, $data);
+    }
+
+    /**
+     * Get recent activities formatted for the frontend.
+     */
+    private function getRecentActivities(): array
     {
         return Activity::latest()
             ->with('causer')
-            ->limit(10)
+            ->limit(8)
             ->get()
+            ->map(fn ($activity) => [
+                'id'          => $activity->id,
+                'description' => $activity->description,
+                'created_at'  => $activity->created_at->diffForHumans(),
+            ])
             ->toArray();
     }
 }

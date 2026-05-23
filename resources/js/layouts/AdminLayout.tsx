@@ -1,65 +1,164 @@
 import React, { useState, useEffect, type ReactNode } from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { ToastProvider, useToast } from "../components/Toast";
 
 interface AdminLayoutProps { children: ReactNode; }
 
-// Inline Header
-const AdminHeader: React.FC<{ toggleActive: () => void; darkMode: boolean; setDarkMode: (v: boolean) => void }> = ({ toggleActive, darkMode, setDarkMode }) => {
-    const { auth } = usePage().props as any;
+const menuItems = [
+    { key: "dashboard", icon: "dashboard", label: "Dashboard",
+        children: [
+            { path: "/admin/dashboard", label: "Overview", icon: "space_dashboard" },
+            { path: "/admin/monitoring", label: "NOC Monitoring", icon: "monitor_heart" },
+        ]},
+    { key: "customers", icon: "group", label: "Pelanggan",
+        children: [
+            { path: "/admin/customers", label: "Semua Pelanggan", icon: "people" },
+            { path: "/admin/customers/create", label: "Tambah Pelanggan", icon: "person_add" },
+        ]},
+    { key: "routers", icon: "router", label: "Router",
+        children: [
+            { path: "/admin/routers", label: "Semua Router", icon: "dns" },
+            { path: "/admin/routers/create", label: "Tambah Router", icon: "add_circle" },
+        ]},
+    { key: "billing", icon: "receipt_long", label: "Billing",
+        children: [
+            { path: "/admin/invoices", label: "Invoice", icon: "description" },
+            { path: "/admin/payments", label: "Pembayaran", icon: "payments" },
+        ]},
+    { key: "tickets", icon: "confirmation_number", label: "Tiket Support",
+        children: [
+            { path: "/admin/tickets", label: "Semua Tiket", icon: "support_agent" },
+        ]},
+    { key: "network", icon: "share", label: "Jaringan",
+        children: [
+            { path: "/admin/topology", label: "Topologi", icon: "account_tree" },
+        ]},
+    { key: "settings", icon: "settings", label: "Pengaturan",
+        children: [
+            { path: "/admin/users", label: "Pengguna", icon: "manage_accounts" },
+            { path: "/admin/settings", label: "Konfigurasi", icon: "tune" },
+        ]},
+];
+
+const AdminSidebar: React.FC<{ collapsed: boolean; toggleActive: () => void }> = ({ collapsed, toggleActive }) => {
+    const { url } = usePage();
+    const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ dashboard: true });
+    const toggleMenu = (key: string) => setOpenMenus((p) => ({ ...p, [key]: !p[key] }));
+    const isActive = (path: string) => url === path || url.startsWith(path + "/");
+
     return (
-        <div id="header" className="header-area bg-white dark:bg-[#0c1427] py-[13px] px-[20px] md:px-[25px] fixed top-0 z-[6] rounded-b-md transition-all shadow-sm" style={{ left: 0, right: 0 }}>
-            <div className="flex items-center justify-between">
-                <button type="button" className="hide-sidebar-toggle transition-all hover:text-primary-500" onClick={toggleActive}>
-                    <i className="material-symbols-outlined !text-[20px]">menu</i>
-                </button>
-                <div className="flex items-center gap-3">
-                    <button onClick={() => setDarkMode(!darkMode)} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-[#15203c] transition-colors">
-                        <i className="material-symbols-outlined !text-[20px] text-gray-500 dark:text-gray-400">{darkMode ? "light_mode" : "dark_mode"}</i>
-                    </button>
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-medium">
-                            {auth?.user?.name?.charAt(0) || "A"}
-                        </div>
-                        <span className="text-sm font-medium text-black dark:text-white hidden md:block">{auth?.user?.name || "Admin"}</span>
+        <aside className={`fixed top-0 left-0 z-40 h-screen bg-white dark:bg-[#0c1427] border-r border-gray-100 dark:border-[#172036] transition-all duration-300 flex flex-col ${
+            collapsed ? "w-[72px]" : "w-[260px]"
+        }`}>
+            <div className="flex items-center h-16 px-4 border-b border-gray-100 dark:border-[#172036] shrink-0">
+                <Link href="/admin/dashboard" className="flex items-center gap-3 overflow-hidden">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
+                        <span className="text-white font-bold text-sm">R</span>
                     </div>
-                </div>
+                    <span className={`font-bold text-lg text-gray-800 dark:text-white whitespace-nowrap transition-all duration-300 ${collapsed ? "opacity-0 w-0 scale-0" : "opacity-100 scale-100"}`}>RJNet</span>
+                </Link>
+                <button type="button" className="ml-auto lg:hidden hover:text-primary-500" onClick={toggleActive}>
+                    <i className="material-symbols-outlined">close</i>
+                </button>
             </div>
-        </div>
+            <nav className="p-3 space-y-1 overflow-y-auto flex-1">
+                {menuItems.map((menu) => (
+                    <div key={menu.key}>
+                        <button onClick={() => toggleMenu(menu.key)}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors overflow-hidden ${
+                                openMenus[menu.key]
+                                    ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10"
+                                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
+                            }`}>
+                            <i className="material-symbols-outlined !text-[22px] shrink-0">{menu.icon}</i>
+                            <span className={`flex-1 text-left truncate transition-all duration-300 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>{menu.label}</span>
+                            <i className={`material-symbols-outlined !text-[16px] transition-transform shrink-0 ${openMenus[menu.key] ? "rotate-180" : ""} ${collapsed ? "hidden" : ""}`}>expand_more</i>
+                        </button>
+                        {openMenus[menu.key] && !collapsed && (
+                            <div className="ml-9 mt-1 space-y-0.5">
+                                {menu.children.map((child) => (
+                                    <Link key={child.path} href={child.path}
+                                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                                            isActive(child.path)
+                                                ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 font-medium"
+                                                : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#15203c]"
+                                        }`}>
+                                        <i className="material-symbols-outlined !text-[16px]">{child.icon}</i>
+                                        <span className="truncate">{child.label}</span>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </nav>
+        </aside>
     );
 };
 
-// Inline Footer
+const AdminHeader: React.FC<{ toggleActive: () => void; darkMode: boolean; setDarkMode: (v: boolean) => void }> = ({ toggleActive, darkMode, setDarkMode }) => {
+    const { auth } = usePage().props as any;
+    const user = auth?.user;
+    return (
+        <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#0c1427]/80 backdrop-blur-lg border-b border-gray-100 dark:border-[#172036]">
+            <div className="flex items-center justify-between h-16 px-4 md:px-6">
+                <button onClick={toggleActive} className="p-2 hover:bg-gray-100 dark:hover:bg-[#15203c] rounded-lg transition-colors">
+                    <i className="material-symbols-outlined text-gray-600 dark:text-gray-300 !text-[22px]">menu</i>
+                </button>
+                <div className="flex items-center gap-2">
+                    <button onClick={() => setDarkMode(!darkMode)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-[#15203c] transition-colors">
+                        <i className="material-symbols-outlined text-gray-500 dark:text-gray-400 !text-[20px]">{darkMode ? "light_mode" : "dark_mode"}</i>
+                    </button>
+                    <div className="flex items-center gap-3 pl-3 border-l border-gray-200 dark:border-gray-700">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                            {user?.name?.charAt(0)?.toUpperCase() || "A"}
+                        </div>
+                        <div className="hidden sm:block text-sm leading-tight">
+                            <p className="font-semibold text-gray-800 dark:text-white">{user?.name || "Admin"}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    );
+};
+
 const AdminFooter: React.FC = () => (
-    <div className="bg-white dark:bg-[#0c1427] border-t border-gray-100 dark:border-[#172036] py-4 px-[25px] text-center">
-        <p className="text-sm text-gray-500">&copy; {new Date().getFullYear()} <span className="font-medium text-black dark:text-white">RJNet</span>. All rights reserved.</p>
-    </div>
+    <footer className="bg-white dark:bg-[#0c1427] border-t border-gray-100 dark:border-[#172036] py-4 px-6 text-center">
+        <p className="text-sm text-gray-500">&copy; {new Date().getFullYear()} <span className="font-semibold text-gray-700 dark:text-gray-300">RJNet</span>. All rights reserved.</p>
+    </footer>
 );
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-    const [toggleActive, setToggleActive] = useState(false);
+const AdminLayoutContent: React.FC<AdminLayoutProps> = ({ children }) => {
+    const [collapsed, setCollapsed] = useState(false);
     const [darkMode, setDarkMode] = useState(() => {
         if (typeof window !== "undefined") return document.documentElement.classList.contains("dark");
         return false;
     });
+    const { flash } = usePage().props as any;
+    const { setFlash } = useToast();
 
     useEffect(() => {
         document.documentElement.classList.toggle("dark", darkMode);
         localStorage.setItem("darkMode", darkMode ? "dark" : "light");
     }, [darkMode]);
 
-    const handleToggle = () => setToggleActive(!toggleActive);
+    useEffect(() => {
+        if (flash && Object.keys(flash).length > 0) {
+            setFlash(flash);
+        }
+    }, [flash]);
+
+    const toggleSidebar = () => setCollapsed((prev) => !prev);
 
     return (
         <div className={darkMode ? "dark" : ""}>
             <div className="min-h-screen bg-gray-50 dark:bg-[#0a0e17]">
-                <div className={`fixed top-0 ltr:left-0 rtl:right-0 h-screen z-50 transition-all duration-300 ${toggleActive ? "ltr:-left-[285px] rtl:-right-[285px]" : "left-0"}`}>
-                    <AdminSidebar toggleActive={handleToggle} />
-                </div>
-                <div className={`transition-all duration-300 ${toggleActive ? "ltr:ml-[0px] rtl:mr-[0px]" : "ltr:ml-[285px] rtl:mr-[285px]"}`}>
-                    <AdminHeader toggleActive={handleToggle} darkMode={darkMode} setDarkMode={setDarkMode} />
-                    <div className="pt-[80px] px-[20px] md:px-[25px] pb-[25px]">
-                        <main className="min-h-[calc(100vh-160px)]">{children}</main>
-                    </div>
+                <AdminSidebar collapsed={collapsed} toggleActive={toggleSidebar} />
+                <div className={`transition-all duration-300 ${collapsed ? "ml-[72px]" : "ml-[260px]"}`}>
+                    <AdminHeader toggleActive={toggleSidebar} darkMode={darkMode} setDarkMode={setDarkMode} />
+                    <main className="p-4 md:p-6 min-h-[calc(100vh-64px)]">{children}</main>
                     <AdminFooter />
                 </div>
             </div>
@@ -67,115 +166,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     );
 };
 
-// Inline Sidebar
-const AdminSidebar: React.FC<{ toggleActive: () => void }> = ({ toggleActive }) => {
-    const { url } = usePage();
-    const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-        dashboard: true, customers: false, routers: false,
-        billing: false, tickets: false, network: false, settings: false,
-    });
-
-    const toggleMenu = (key: string) => {
-        setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
-    };
-
-    const isActive = (path: string) => url.startsWith(path);
-
-    const menuItems = [
-        {
-            key: "dashboard", icon: "dashboard", label: "Dashboard",
-            children: [
-                { path: "/admin/dashboard", label: "Overview", icon: "monitoring" },
-                { path: "/admin/monitoring", label: "NOC Monitoring", icon: "sensors" },
-            ]
-        },
-        {
-            key: "customers", icon: "people", label: "Pelanggan",
-            children: [
-                { path: "/admin/customers", label: "Semua Pelanggan", icon: "group" },
-                { path: "/admin/customers/create", label: "Tambah Pelanggan", icon: "person_add" },
-            ]
-        },
-        {
-            key: "routers", icon: "router", label: "Router",
-            children: [
-                { path: "/admin/routers", label: "Semua Router", icon: "dns" },
-                { path: "/admin/routers/create", label: "Tambah Router", icon: "add_circle" },
-            ]
-        },
-        {
-            key: "billing", icon: "receipt_long", label: "Billing",
-            children: [
-                { path: "/admin/invoices", label: "Invoice", icon: "description" },
-                { path: "/admin/payments", label: "Pembayaran", icon: "payments" },
-            ]
-        },
-        {
-            key: "tickets", icon: "support_agent", label: "Tiket",
-            children: [
-                { path: "/admin/tickets", label: "Semua Tiket", icon: "confirmation_number" },
-            ]
-        },
-        {
-            key: "network", icon: "share", label: "Jaringan",
-            children: [
-                { path: "/admin/topology", label: "Topologi", icon: "account_tree" },
-            ]
-        },
-        {
-            key: "settings", icon: "settings", label: "Pengaturan",
-            children: [
-                { path: "/admin/users", label: "Pengguna", icon: "manage_accounts" },
-                { path: "/admin/settings", label: "Konfigurasi", icon: "tune" },
-            ]
-        },
-    ];
-
-    return (
-        <div className="sidebar-area bg-white dark:bg-[#0c1427] fixed z-[7] top-0 h-screen transition-all rounded-r-md w-[285px]">
-            <div className="logo bg-white dark:bg-[#0c1427] border-b border-gray-100 dark:border-[#172036] px-[25px] pt-[19px] pb-[15px] absolute z-[2] right-0 top-0 left-0">
-                <Link href="/admin/dashboard" className="transition-none relative flex items-center outline-none">
-                    <img src="/images/logo-icon.svg" alt="logo" width={26} height={26} />
-                    <span className="font-bold text-black dark:text-white relative ltr:ml-[8px] top-px text-xl">RJNet</span>
-                </Link>
-                <button type="button" className="burger-menu inline-block absolute z-[3] top-[24px] ltr:right-[25px] transition-all hover:text-primary-500 lg:hidden" onClick={toggleActive}>
-                    <i className="material-symbols-outlined">close</i>
-                </button>
-            </div>
-            <div className="pt-[89px] px-[22px] pb-[20px] h-screen overflow-y-scroll sidebar-custom-scrollbar">
-                <div className="accordion">
-                    {menuItems.map((menu) => (
-                        <div key={menu.key} className="accordion-item rounded-md text-black dark:text-white mb-[5px] whitespace-nowrap">
-                            <button
-                                className={`accordion-button toggle flex items-center transition-all py-[9px] ltr:pl-[14px] ltr:pr-[30px] rtl:pr-[14px] rtl:pl-[30px] rounded-md font-medium w-full relative hover:bg-gray-50 dark:hover:bg-[#15203c] text-left ${openMenus[menu.key] ? "open" : ""}`}
-                                onClick={() => toggleMenu(menu.key)}
-                            >
-                                <i className="material-symbols-outlined transition-all text-gray-500 dark:text-gray-400 ltr:mr-[7px] !text-[22px] leading-none relative -top-px">{menu.icon}</i>
-                                <span className="title leading-none">{menu.label}</span>
-                                <i className={`material-symbols-outlined ltr:ml-auto rtl:mr-auto transition-all !text-[18px] ${openMenus[menu.key] ? "rotate-180" : ""}`}>expand_more</i>
-                            </button>
-                            <div className={`accordion-collapse ${openMenus[menu.key] ? "block" : "hidden"} pt-[4px]`}>
-                                <ul className="sidebar-submenu ltr:pl-[20px] rtl:pr-[20px]">
-                                    {menu.children.map((child) => (
-                                        <li key={child.path} className="relative">
-                                            <Link
-                                                href={child.path}
-                                                className={`flex items-center transition-all rounded-md py-[9px] ltr:pl-[20px] ltr:pr-[30px] font-medium hover:bg-gray-50 dark:hover:bg-[#15203c] before:absolute before:content-[''] before:top-1/2 before:-translate-y-1/2 before:bg-gray-300 dark:before:bg-gray-600 before:rounded-full ltr:before:left-0 before:w-[8px] before:h-[8px] ${isActive(child.path) ? "text-primary-500 bg-primary-50 dark:bg-[#15203c]" : "text-gray-500 dark:text-gray-400"
-                                                    }`}
-                                            >
-                                                <i className="material-symbols-outlined ltr:mr-[7px] !text-[18px]">{child.icon}</i>
-                                                <span className="leading-none text-sm">{child.label}</span>
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => (
+    <ToastProvider>
+        <AdminLayoutContent>{children}</AdminLayoutContent>
+    </ToastProvider>
+);
 
 export default AdminLayout;

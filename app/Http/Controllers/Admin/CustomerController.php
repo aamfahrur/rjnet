@@ -29,11 +29,23 @@ class CustomerController extends Controller
         $customers = Customer::query()
             ->with(['addresses', 'activeSubscription.package', 'activeSubscription.router'])
             ->withCount(['invoices as overdue_count' => fn ($q) => $q->where('status', \App\Enums\InvoiceStatus::OVERDUE->value)])
+            ->when(request('search'), fn ($q, $search) => $q->where(function ($q) use ($search) {
+                $q->where('full_name', 'like', "%{$search}%")
+                  ->orWhere('customer_code', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            }))
+            ->when(request('status'), fn ($q, $status) => $q->where('status', $status))
             ->latest()
-            ->paginate(25);
+            ->paginate(25)
+            ->withQueryString();
 
         return Inertia::render('Admin/Customers/Index', [
             'customers' => CustomerResource::collection($customers),
+            'filters'   => [
+                'search' => request('search', ''),
+                'status' => request('status', ''),
+            ],
         ]);
     }
 
