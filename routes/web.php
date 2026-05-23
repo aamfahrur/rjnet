@@ -16,7 +16,7 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Landing/Index', [
         'meta' => [
-            'title' => 'RJNet — Internet Cepat & Stabil untuk Rumah dan Bisnis Anda',
+            'title'       => 'RJNet — Internet Cepat & Stabil untuk Rumah dan Bisnis Anda',
             'description' => 'RJNet menyediakan layanan internet fiber optic cepat, stabil, dan terjangkau. Instalasi gratis, support 24/7.',
         ],
     ]);
