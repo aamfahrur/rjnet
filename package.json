@@ -12,6 +12,7 @@
         "@vitejs/plugin-react": "^4.4.1",
         "apexcharts": "^4.7.0",
         "axios": "^1.7.0",
+        "framer-motion": "^12.40.0",
         "laravel-vite-plugin": "^1.2.0",
         "material-symbols": "^0.31.7",
         "react": "^19.1.0",
