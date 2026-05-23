@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Jobs\CollectRouterMetrics;
 use App\Models\Router;
-use App\Services\Mikrotik\MikrotikServiceFactory;
+use App\Services\Mikrotik\MikrotikService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +16,7 @@ use Inertia\Response;
 class RouterController extends Controller
 {
     public function __construct(
-        private readonly MikrotikServiceFactory $mikrotikFactory,
+        private readonly MikrotikService $mikrotik,
     ) {
     }
 
@@ -113,20 +113,9 @@ class RouterController extends Controller
      */
     public function testConnection(Router $router): \Illuminate\Http\JsonResponse
     {
-        try {
-            $monitoring = $this->mikrotikFactory->monitoring($router);
-            $identity = $monitoring->getSystemIdentity();
+        $result = $this->mikrotik->testConnection($router);
 
-            return response()->json([
-                'success'  => true,
-                'identity' => $identity,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error'   => $e->getMessage(),
-            ], 422);
-        }
+        return response()->json($result, $result['success'] ? 200 : 422);
     }
 
     /**
