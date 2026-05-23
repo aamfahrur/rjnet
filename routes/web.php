@@ -38,11 +38,10 @@ Route::prefix('auth')->group(function () {
 });
 
 // =========================================================================
-// Authenticated Admin Routes
+// Authenticated Admin Routes (shared by admin, teknisi, cs)
 // =========================================================================
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    // TODO: add 'role:admin|teknisi|cs,web' middleware after debugging
+Route::middleware(['auth', 'role:admin|teknisi|cs,web'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
@@ -80,9 +79,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/payments/{payment}', [App\Http\Controllers\Admin\PaymentController::class, 'show'])->name('payments.show');
     Route::post('/payments/{payment}/confirm', [App\Http\Controllers\Admin\PaymentController::class, 'manualConfirm'])->name('payments.confirm');
 
-    // Payment Gateways Config
-    Route::resource('payment-gateways', App\Http\Controllers\Admin\PaymentGatewayConfigController::class)->except(['show']);
-
     // Ticket Management
     Route::get('/tickets', [App\Http\Controllers\Admin\TicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/{ticket}', [App\Http\Controllers\Admin\TicketController::class, 'show'])->name('tickets.show');
@@ -102,6 +98,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Reports
     Route::get('/reports', fn () => Inertia::render('Admin/Reports'))->name('reports');
+});
+
+// =========================================================================
+// Admin-Only Routes (sensitive settings)
+// =========================================================================
+
+Route::middleware(['auth', 'role:admin,web'])->prefix('admin')->name('admin.')->group(function () {
+    // Payment Gateways Config
+    Route::resource('payment-gateways', App\Http\Controllers\Admin\PaymentGatewayConfigController::class)->except(['show']);
 
     // Settings
     Route::get('/settings', fn () => Inertia::render('Admin/Settings'))->name('settings');
